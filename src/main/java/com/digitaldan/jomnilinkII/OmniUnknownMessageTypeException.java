@@ -13,7 +13,7 @@ public class OmniUnknownMessageTypeException extends Exception {
 		super(message);
 	}
 
-	public int getUnknowMessageType() {
+	public int getUnknownMessageType() {
 		return type;
 	}
 

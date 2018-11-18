@@ -3,7 +3,7 @@ package com.digitaldan.jomnilinkII.MessageTypes;
 import com.digitaldan.jomnilinkII.Message;
 
 public class ClearNames implements Message {
-	private static ClearNames INSTANCE = new ClearNames();
+	private static final ClearNames INSTANCE = new ClearNames();
 
 	private ClearNames() {
 	}

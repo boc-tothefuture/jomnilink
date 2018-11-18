@@ -24,7 +24,7 @@ import lombok.ToString;
 @ToString
 public class ReqSystemFormats implements Message {
 
-	private static ReqSystemFormats INSTANCE = new ReqSystemFormats();
+	private static final ReqSystemFormats INSTANCE = new ReqSystemFormats();
 
 	private ReqSystemFormats() {
 	}

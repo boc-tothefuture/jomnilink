@@ -19,7 +19,6 @@ package com.digitaldan.jomnilinkII.MessageTypes.properties;
 */
 
 import com.digitaldan.jomnilinkII.MessageTypes.ObjectProperties;
-import com.digitaldan.jomnilinkII.MessageTypes.statuses.ZoneStatus;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

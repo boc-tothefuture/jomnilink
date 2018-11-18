@@ -53,18 +53,18 @@ public class MessageUtils {
 
 	public static String getBits(int value) {
 		int displayMask = 1 << 31;
-		StringBuffer buf = new StringBuffer(38);
+		StringBuilder builder = new StringBuilder(38);
 
 		for (int c = 1; c <= 32; c++) {
-			buf.append((value & displayMask) == 0 ? '0' : '1');
+			builder.append((value & displayMask) == 0 ? '0' : '1');
 			value <<= 1;
 
 			if (c % 4 == 0) {
-				buf.append(' ');
+				builder.append(' ');
 			}
 		}
 
-		return buf.toString();
+		return builder.toString();
 	}
 
 	public static int omniToF(int temp) {

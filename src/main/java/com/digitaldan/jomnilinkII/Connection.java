@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -88,20 +87,20 @@ import com.digitaldan.jomnilinkII.MessageTypes.systemEvents.SystemEvent;
 public class Connection extends Thread {
 	private static final Logger logger = LoggerFactory.getLogger(Connection.class);
 
-	private static int PACKET_TYPE_CLIENT_REQUEST_NEW_SESSION = 1;
-	private static int PACKET_TYPE_CONTROLLER_ACKNOWLEDGE_NEW_SESSION = 2;
-	private static int PACKET_TYPE_CLIENT_REQUEST_SECURE_CONNECTION = 3;
-	private static int PACKET_TYPE_CONTROLLER_ACKNOWLEDGE_SECURE_CONNECTION = 4;
-	private static int PACKET_TYPE_CLIENT_SESSION_TERMINATED = 5;
-	private static int PACKET_TYPE_CONTROLLER_SESSION_TERMINATED = 6;
-	private static int PACKET_TYPE_CONTROLLER_CANNOT_START_NEW_SESSION = 7;
-	private static int PACKET_TYPE_OMNI_LINK_MESSAGE = 32;
+	private final static int PACKET_TYPE_CLIENT_REQUEST_NEW_SESSION = 1;
+	private final static int PACKET_TYPE_CONTROLLER_ACKNOWLEDGE_NEW_SESSION = 2;
+	private final static int PACKET_TYPE_CLIENT_REQUEST_SECURE_CONNECTION = 3;
+	private final static int PACKET_TYPE_CONTROLLER_ACKNOWLEDGE_SECURE_CONNECTION = 4;
+	private final static int PACKET_TYPE_CLIENT_SESSION_TERMINATED = 5;
+	private final static int PACKET_TYPE_CONTROLLER_SESSION_TERMINATED = 6;
+	private final static int PACKET_TYPE_CONTROLLER_CANNOT_START_NEW_SESSION = 7;
+	private final static int PACKET_TYPE_OMNI_LINK_MESSAGE = 32;
 
-	public static int MAX_PACKET_SIZE = 255;
-	//Omni will kick you after 5 minutes of not receiveing anything
-	public static int OMNI_TO = 60 * 5 * 1000;
+	private static final int MAX_PACKET_SIZE = 255;
+	//Omni will kick you after 5 minutes of not receiving anything
+	private static final int OMNI_TO = 60 * 5 * 1000;
 	//Keep alive time, omni timeout minus one minute
-	public static int PING_TO = OMNI_TO - (1000 * 60);
+	private static final int PING_TO = OMNI_TO - (1000 * 60);
 
 	public boolean debug;
 	private boolean connected;
@@ -113,7 +112,7 @@ public class Connection extends Thread {
 	private int tx;
 	private int rx;
 	private Aes aes;
-	private Object writeLock = new Object();
+	private final Object writeLock = new Object();
 	private Exception lastException;
 	private final BlockingQueue<Message> notifications;
 	private final List<NotificationListener> notificationListeners;
@@ -121,13 +120,13 @@ public class Connection extends Thread {
 	private final BlockingQueue<OmniPacket> responses;
 	private ConnectionWatchdog watchdog;
 
-	public Connection(String address, int port, String key) throws Exception, IOException, UnknownHostException {
+	public Connection(String address, int port, String key) throws Exception {
 		ping = true;
 		notifications = new LinkedBlockingQueue<>();
 		responses = new LinkedBlockingQueue<>();
 		lastException = null;
-		notificationListeners = new CopyOnWriteArrayList<NotificationListener>();
-		disconnectListeners = new CopyOnWriteArrayList<DisconnectListener>();
+		notificationListeners = new CopyOnWriteArrayList<>();
+		disconnectListeners = new CopyOnWriteArrayList<>();
 
 		byte[] _key = hexStringToByteArray(key.replaceAll("\\W", ""));
 
@@ -147,7 +146,7 @@ public class Connection extends Thread {
 
 		byte[] data = rec.data();
 
-		int version = (data[0] << 8) + (data[1] << 0);
+		int version = (data[0] << 8) + (data[1]);
 
 		logger.debug("Controller version {}", version);
 
@@ -228,7 +227,7 @@ public class Connection extends Thread {
 		disconnectListeners.add(listener);
 	}
 
-	public void removeDisconnecListener(DisconnectListener listener) {
+	public void removeDisconnectListener(DisconnectListener listener) {
 		disconnectListeners.remove(listener);
 	}
 
@@ -276,7 +275,7 @@ public class Connection extends Thread {
 					}
 				} catch (OmniUnknownMessageTypeException e) {
 					//ignore
-					logger.debug("run: Uknown Messgage type {}  Continuing", e.getUnknowMessageType());
+					logger.debug("run: Unknown Messagee type {}  Continuing", e.getUnknownMessageType());
 				} catch (Exception e) {
 					disconnect();
 					lastException = e;
@@ -312,7 +311,7 @@ public class Connection extends Thread {
 		}
 		/* 2 */
 		for (int i = 0; i < (txlength / 16); i++) {
-			paddedData[0 + (16 * i)] ^= (tx >> 8) & 0xFF;
+			paddedData[(16 * i)] ^= (tx >> 8) & 0xFF;
 			paddedData[1 + (16 * i)] ^= (tx) & 0xFF;
 		}
 		/*3*/
@@ -342,7 +341,7 @@ public class Connection extends Thread {
 		}
 	}
 
-	private OmniPacket readBytesEncrypted() throws IOException, SocketTimeoutException {
+	private OmniPacket readBytesEncrypted() throws IOException {
 		OmniPacket p = readBytes();
 		logger.trace("Enc Dec " + bytesToString(p.data()));
 		if (p.data().length == 0) {
@@ -351,7 +350,7 @@ public class Connection extends Thread {
 		byte[] decData = aes.decrypt(p.data());
 		/* XOR data */
 		for (int i = 0; i < (decData.length / 16); i++) {
-			decData[0 + (16 * i)] ^= (p.seq >> 8) & 0xFF;
+			decData[(16 * i)] ^= (p.seq >> 8) & 0xFF;
 			decData[1 + (16 * i)] ^= (p.seq) & 0xFF;
 		}
 		logger.trace("Data Dec {}", bytesToString(decData));
@@ -359,7 +358,7 @@ public class Connection extends Thread {
 
 	}
 
-	private OmniPacket readBytesEncryptedExtended() throws IOException, SocketTimeoutException {
+	private OmniPacket readBytesEncryptedExtended() throws IOException {
 		//Notifications have thrown a bit of a curve ball, its possible to have
 		//two packets on the wire, but because the length of the packet
 		//is encrypted we have to peek into the first 16 bytes, decrypt those
@@ -415,7 +414,7 @@ public class Connection extends Thread {
 			aes.decrypt(encData, 0, readLength, decData2, decData.length);
 			/* XOR data */
 			for (int i = 1; i < (decData2.length / 16); i++) {
-				decData2[0 + (16 * i)] ^= (seq >> 8) & 0xFF;
+				decData2[(16 * i)] ^= (seq >> 8) & 0xFF;
 				decData2[1 + (16 * i)] ^= (seq) & 0xFF;
 			}
 			decData = decData2;
@@ -427,7 +426,7 @@ public class Connection extends Thread {
 
 	}
 
-	private OmniPacket readBytes() throws IOException, SocketTimeoutException {
+	private OmniPacket readBytes() throws IOException {
 		byte[] data = new byte[MAX_PACKET_SIZE];
 		int cnt = is.read(data);
 
@@ -599,7 +598,7 @@ public class Connection extends Thread {
 				next = endObject;
 			}
 
-			Message msg = null;
+			Message msg;
 			if (extended) {
 				msg = sendAndReceive(ReqExtendedObjectStatus.builder().objectType(objectType).startObject(current).endObject(next).build());
 			} else {
@@ -755,40 +754,39 @@ public class Connection extends Thread {
 	}
 
 	private String bytesToString(byte[] bytes) {
-		StringBuffer buff = new StringBuffer();
-		for (int i = 0; i < bytes.length; i++) {
-			buff.append("0x");
-			buff.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-			buff.append(" ");
+		StringBuilder builder = new StringBuilder();
+		for (byte aByte : bytes) {
+			builder.append("0x");
+			builder.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+			builder.append(" ");
 		}
-		return buff.toString();
+		return builder.toString();
 	}
 
 	private class OmniPacket {
-		private int seq;
-		private int type;
-		private byte[] data;
+		private final int seq;
+		private final int type;
+		private final byte[] data;
 
-		public OmniPacket(int seq, int type, byte[] data) {
+		OmniPacket(int seq, int type, byte[] data) {
 			this.seq = seq;
 			this.type = type;
 			this.data = data;
 		}
 
-		public OmniPacket(int type, byte[] data) {
-			this.type = type;
-			this.data = data;
+		OmniPacket(int type, byte[] data) {
+			this(0, type, data);
 		}
 
-		public int seq() {
+		int seq() {
 			return seq;
 		}
 
-		public int type() {
+		int type() {
 			return type;
 		}
 
-		public byte[] data() {
+		byte[] data() {
 			return data;
 		}
 	}
@@ -810,7 +808,7 @@ public class Connection extends Thread {
 						reqSystemStatus();
 					} catch (Exception ignored) {
 					}
-					;
+
 				}
 				try {
 					sleep(1000);
@@ -822,12 +820,7 @@ public class Connection extends Thread {
 
 	private static class NotificationHandler implements Runnable {
 
-		public static final Message POISON = new Message() {
-			@Override
-			public int getMessageType() {
-				return 0;
-			}
-		};
+		static final Message POISON = () -> 0;
 
 		private final BlockingQueue<Message> notifications;
 		private final List<NotificationListener> listeners;
@@ -857,7 +850,7 @@ public class Connection extends Thread {
 									}
 								}
 							} else {
-								logger.debug("Unhandled notficiation message: {}", message);
+								logger.debug("Unhandled notification message: {}", message);
 							}
 						}
 					}

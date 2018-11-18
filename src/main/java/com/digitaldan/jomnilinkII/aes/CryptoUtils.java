@@ -40,7 +40,7 @@ package com.digitaldan.jomnilinkII.aes;
 // <A HREF="/resources/classes/Acme/Crypto/CryptoUtils.java">Fetch the software.</A><BR>
 // <A HREF="/resources/classes/Acme.tar.gz">Fetch the entire Acme package.</A>
 
-public class CryptoUtils {
+class CryptoUtils {
 
 	/// Utility routine to fill a block with zeros.
 	public static void zeroBlock(byte[] block, int off, int len) {
@@ -80,9 +80,7 @@ public class CryptoUtils {
 
 	/// Utility routine to copy one block to another.
 	public static void copyBlock(byte[] src, int srcOff, byte[] dst, int dstOff, int len) {
-		for (int i = 0; i < len; ++i) {
-			dst[dstOff + i] = src[srcOff + i];
-		}
+		if (len >= 0) System.arraycopy(src, srcOff + 0, dst, dstOff + 0, len);
 	}
 
 	/// Utility routine to copy one block to another.
@@ -186,12 +184,12 @@ public class CryptoUtils {
 	/// Convert a block to a String representation.
 	public static String toStringBlock(byte[] block, int off, int len) {
 		String hexits = "0123456789abcdef";
-		StringBuffer buf = new StringBuffer();
+		StringBuilder builder = new StringBuilder();
 		for (int i = off; i < off + len; ++i) {
-			buf.append(hexits.charAt((block[i] >>> 4) & 0xf));
-			buf.append(hexits.charAt(block[i] & 0xf));
+			builder.append(hexits.charAt((block[i] >>> 4) & 0xf));
+			builder.append(hexits.charAt(block[i] & 0xf));
 		}
-		return "[" + buf + "]";
+		return builder.insert(0,"[").append("]").toString();
 	}
 
 	/// Convert a block to a String representation.

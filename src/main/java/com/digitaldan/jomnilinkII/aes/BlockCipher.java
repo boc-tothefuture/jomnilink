@@ -40,7 +40,7 @@ package com.digitaldan.jomnilinkII.aes;
 // @see DesCipher
 // @see CbcBlockCipher
 
-public abstract class BlockCipher extends Cipher {
+abstract class BlockCipher extends Cipher {
 
 	/// Constructor.
 	public BlockCipher(int keySize, int blockSize) {
@@ -49,7 +49,7 @@ public abstract class BlockCipher extends Cipher {
 	}
 
 	/// How big a block is.
-	public int blockSize;
+	public final int blockSize;
 
 	/// Return how big a block is.
 	public int blockSize() {

@@ -25,7 +25,7 @@ import lombok.ToString;
 public class ReqConnectedSecurityStatus implements Message {
 
 
-	private static ReqConnectedSecurityStatus INSTANCE = new ReqConnectedSecurityStatus();
+	private static final ReqConnectedSecurityStatus INSTANCE = new ReqConnectedSecurityStatus();
 
 	private ReqConnectedSecurityStatus() {
 	}

@@ -1,7 +1,6 @@
 package com.digitaldan.jomnilinkII.MessageTypes.statuses;
 
 
-import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 

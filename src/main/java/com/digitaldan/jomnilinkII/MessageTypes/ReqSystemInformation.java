@@ -24,7 +24,7 @@ import lombok.ToString;
 @ToString
 public class ReqSystemInformation implements Message {
 
-	private static ReqSystemInformation INSTANCE = new ReqSystemInformation();
+	private static final ReqSystemInformation INSTANCE = new ReqSystemInformation();
 
 	private ReqSystemInformation() {
 	}

@@ -49,7 +49,7 @@ public enum SystemEventType {
 	private final int bitMask;
 	private final Class<?> systemEventClass;
 
-	private SystemEventType(int bitTemplate, int bitMask, Class<?> systemEventClass) {
+	SystemEventType(int bitTemplate, int bitMask, Class<?> systemEventClass) {
 		this.bitTemplate = bitTemplate;
 		this.bitMask = bitMask;
 		this.systemEventClass = systemEventClass;

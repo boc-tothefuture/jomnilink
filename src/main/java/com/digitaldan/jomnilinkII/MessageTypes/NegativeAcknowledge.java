@@ -25,7 +25,7 @@ import lombok.ToString;
 public class NegativeAcknowledge implements Message {
 
 
-	private static NegativeAcknowledge INSTANCE = new NegativeAcknowledge();
+	private static final NegativeAcknowledge INSTANCE = new NegativeAcknowledge();
 
 	private NegativeAcknowledge() {
 	}

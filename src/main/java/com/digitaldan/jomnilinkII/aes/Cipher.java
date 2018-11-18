@@ -38,7 +38,7 @@ package com.digitaldan.jomnilinkII.aes;
 // @see EncryptedOutputStream
 // @see EncryptedInputStream
 
-public abstract class Cipher extends CryptoUtils {
+abstract class Cipher extends CryptoUtils {
 
 	/// Constructor.
 	public Cipher(int keySize) {
@@ -47,7 +47,7 @@ public abstract class Cipher extends CryptoUtils {
 
 	/// How big a key is.  Keyless ciphers use 0.  Variable-length-key ciphers
 	// also use 0.
-	public int keySize;
+	public final int keySize;
 
 	/// Return how big a key is.
 	public int keySize() {

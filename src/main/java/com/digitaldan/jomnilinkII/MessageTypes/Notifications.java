@@ -54,7 +54,7 @@ public class Notifications implements Message {
 	
 	Expected reply   ACKNOWLEDGE 
 	
-	NOTE notifiations that come back have a SEQ of 00
+	NOTE notifications that come back have a SEQ of 00
 	
 	 */
 	private final boolean enabled;

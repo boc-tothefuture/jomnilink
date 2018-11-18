@@ -23,7 +23,7 @@ import lombok.ToString;
 
 @ToString
 public class ReqSystemFeatures implements Message {
-	private static ReqSystemFeatures INSTANCE = new ReqSystemFeatures();
+	private static final ReqSystemFeatures INSTANCE = new ReqSystemFeatures();
 
 	private ReqSystemFeatures() {
 	}

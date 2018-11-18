@@ -23,7 +23,7 @@ import lombok.ToString;
 
 @ToString
 public class ReqZoneReadyStatus implements Message {
-	private static ReqZoneReadyStatus INSTANCE = new ReqZoneReadyStatus();
+	private static final ReqZoneReadyStatus INSTANCE = new ReqZoneReadyStatus();
 
 	private ReqZoneReadyStatus() {
 	}

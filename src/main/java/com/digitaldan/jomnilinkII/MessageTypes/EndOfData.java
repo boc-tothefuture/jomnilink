@@ -25,7 +25,7 @@ import lombok.ToString;
 public class EndOfData implements Message {
 
 
-	private static EndOfData INSTANCE = new EndOfData();
+	private static final EndOfData INSTANCE = new EndOfData();
 
 	private EndOfData() {
 	}

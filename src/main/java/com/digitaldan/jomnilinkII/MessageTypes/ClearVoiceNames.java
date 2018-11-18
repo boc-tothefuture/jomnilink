@@ -4,7 +4,7 @@ import com.digitaldan.jomnilinkII.Message;
 
 public class ClearVoiceNames implements Message {
 
-	private static ClearVoiceNames INSTANCE = new ClearVoiceNames();
+	private static final ClearVoiceNames INSTANCE = new ClearVoiceNames();
 
 	private ClearVoiceNames() {
 	}

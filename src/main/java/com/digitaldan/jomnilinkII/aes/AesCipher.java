@@ -48,13 +48,13 @@ package com.digitaldan.jomnilinkII.aes;
 
 public class AesCipher extends BlockCipher {
 
-	// Constants, variables, and auxillary routines.
+	// Constants, variables, and auxiliary routines.
 
 	// Key size in bytes.  Valid values are 16, 24, and 32.
-	public static final int KEY_SIZE = 16;
+	private static final int KEY_SIZE = 16;
 
 	// Block size in bytes.  Valid values are 16, 24, and 32.
-	public static final int BLOCK_SIZE = 16;
+	private static final int BLOCK_SIZE = 16;
 
 	private static final int[] alog = new int[256];
 	private static final int[] log = new int[256];
@@ -81,7 +81,7 @@ public class AesCipher extends BlockCipher {
 	private static final char[] HEX_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D',
 			'E', 'F' };
 
-	// Static initializer - to intialise S-boxes and T-boxes
+	// Static initializer - to initialise S-boxes and T-boxes
 	static {
 		int ROOT = 0x11B;
 		int i, j = 0;
@@ -209,12 +209,12 @@ public class AesCipher extends BlockCipher {
 	}
 
 	/// Multiply two elements of GF(2^m).
-	static final int mul(int a, int b) {
+	private static int mul(int a, int b) {
 		return (a != 0 && b != 0) ? alog[(log[a & 0xFF] + log[b & 0xFF]) % 255] : 0;
 	}
 
 	/// Convenience method used in generating Transposition boxes.
-	static final int mul4(int a, byte[] b) {
+	private static int mul4(int a, byte[] b) {
 		if (a == 0) {
 			return 0;
 		}
@@ -230,7 +230,7 @@ public class AesCipher extends BlockCipher {
 	// @param keySize    The size of the user key material in bytes.
 	// @param blockSize  The desired block size in bytes.
 	// @return The number of rounds for a given Rijndael's key and block sizes.
-	public static int getRounds(int keySize, int blockSize) {
+	private static int getRounds(int keySize, int blockSize) {
 		switch (keySize) {
 		case 16:
 			return blockSize == 16 ? 10 : (blockSize == 24 ? 12 : 14);
@@ -244,7 +244,7 @@ public class AesCipher extends BlockCipher {
 	// Constructors.
 
 	// Constructor, string key.
-	public AesCipher(String keyStr) {
+	private AesCipher(String keyStr) {
 		super(KEY_SIZE, BLOCK_SIZE);
 		setKey(keyStr);
 	}
@@ -257,10 +257,10 @@ public class AesCipher extends BlockCipher {
 
 	// Key routines.
 
-	private int ROUNDS = getRounds(KEY_SIZE, BLOCK_SIZE);
-	private int BC = BLOCK_SIZE / 4;
-	private int[][] Ke = new int[ROUNDS + 1][BC]; // encryption round keys
-	private int[][] Kd = new int[ROUNDS + 1][BC]; // decryption round keys
+	private final int ROUNDS = getRounds(KEY_SIZE, BLOCK_SIZE);
+	private final int BC = BLOCK_SIZE / 4;
+	private final int[][] Ke = new int[ROUNDS + 1][BC]; // encryption round keys
+	private final int[][] Kd = new int[ROUNDS + 1][BC]; // decryption round keys
 
 	/// Set the key.
 	@Override

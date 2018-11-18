@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.digitaldan.jomnilinkII.Connection;
-import com.digitaldan.jomnilinkII.DisconnectListener;
 import com.digitaldan.jomnilinkII.Message;
 import com.digitaldan.jomnilinkII.NotificationListener;
 import com.digitaldan.jomnilinkII.OmniInvalidResponseException;
@@ -25,11 +24,11 @@ import com.digitaldan.jomnilinkII.MessageTypes.systemEvents.SystemEvent;
 
 /*
  * Notes for NIO
- * Luanch connection in a worker thread, connect will operate as a blocking operation, on success add the connection object to a NIO thread for reading/writing.
+ * Launch connection in a worker thread, connect will operate as a blocking operation, on success add the connection object to a NIO thread for reading/writing.
  *
  * write web service, sign up with email, password and keys.  On account creation, connect to house, if successful add to database and have our loop pick it up for monitoring.
  *
- * what to do with exceptions?  Pull connections out to a slow que for retry, email user on three bad attemps
+ * what to do with exceptions?  Pull connections out to a slow que for retry, email user on three bad attempts
  */
 
 public class Main {
@@ -100,12 +99,9 @@ public class Main {
 				}
 			});
 
-			c.addDisconnectListener(new DisconnectListener() {
-				@Override
-				public void notConnectedEvent(Exception e) {
-					e.printStackTrace();
-					System.exit(-1);
-				}
+			c.addDisconnectListener(e -> {
+				e.printStackTrace();
+				System.exit(-1);
 			});
 			//			c.debug = true;
 			c.enableNotifications();
@@ -181,38 +177,38 @@ public class Main {
 
 			ObjectStatus status = c.reqObjectStatus(Message.OBJ_TYPE_UNIT, 1, max_units);
 			UnitStatus[] units = (UnitStatus[]) status.getStatuses();
-			for (int i = 0; i < units.length; i++) {
-				logger.info(units[i].toString());
+			for (UnitStatus unit : units) {
+				logger.info(unit.toString());
 			}
 			status = c.reqObjectStatus(Message.OBJ_TYPE_ZONE, 1, max_zones);
 			ZoneStatus[] zones = (ZoneStatus[]) status.getStatuses();
-			for (int i = 0; i < zones.length; i++) {
-				logger.info(zones[i].toString());
+			for (ZoneStatus zone : zones) {
+				logger.info(zone.toString());
 			}
 			status = c.reqObjectStatus(Message.OBJ_TYPE_AREA, 1, max_areas);
 			AreaStatus[] areas = (AreaStatus[]) status.getStatuses();
-			for (int i = 0; i < areas.length; i++) {
-				logger.info(areas[i].toString());
+			for (AreaStatus area : areas) {
+				logger.info(area.toString());
 			}
 			status = c.reqObjectStatus(Message.OBJ_TYPE_THERMO, 1, max_thermos);
 			ThermostatStatus[] thermos = (ThermostatStatus[]) status.getStatuses();
-			for (int i = 0; i < thermos.length; i++) {
-				logger.info(thermos[i].toString());
+			for (ThermostatStatus thermo : thermos) {
+				logger.info(thermo.toString());
 			}
 			status = c.reqObjectStatus(Message.OBJ_TYPE_MESG, 1, max_mesgs);
 			MessageStatus[] megs = (MessageStatus[]) status.getStatuses();
-			for (int i = 0; i < megs.length; i++) {
-				logger.info(megs[i].toString());
+			for (MessageStatus meg : megs) {
+				logger.info(meg.toString());
 			}
 			status = c.reqObjectStatus(Message.OBJ_TYPE_AUX_SENSOR, 1, max_zones);
 			AuxSensorStatus[] auxs = (AuxSensorStatus[]) status.getStatuses();
-			for (int i = 0; i < auxs.length; i++) {
-				logger.info(auxs[i].toString());
+			for (AuxSensorStatus aux : auxs) {
+				logger.info(aux.toString());
 			}
 			status = c.reqObjectStatus(Message.OBJ_TYPE_AUDIO_ZONE, 1, max_audio_zones);
 			AudioZoneStatus[] audiozs = (AudioZoneStatus[]) status.getStatuses();
-			for (int i = 0; i < audiozs.length; i++) {
-				logger.info(audiozs[i].toString());
+			for (AudioZoneStatus audioz : audiozs) {
+				logger.info(audioz.toString());
 			}
 			for (int as = 1; as < max_audio_sources; as++) {
 				int pos = 0;

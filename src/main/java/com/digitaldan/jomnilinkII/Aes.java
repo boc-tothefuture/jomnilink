@@ -23,14 +23,13 @@ import java.io.IOException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-public class Aes {
+class Aes {
 
-	private SecretKeySpec spec;
 	private Cipher decipher;
 	private Cipher encipher;
 
-	public Aes(byte[] key) {
-		spec = new SecretKeySpec(key, "AES");
+	Aes(byte[] key) {
+		SecretKeySpec spec = new SecretKeySpec(key, "AES");
 		try {
 			decipher = Cipher.getInstance("AES/ECB/NoPadding");
 			decipher.init(Cipher.DECRYPT_MODE, spec);
@@ -40,7 +39,7 @@ public class Aes {
 		}
 	}
 
-	public byte[] decrypt(byte[] data) throws IOException {
+	byte[] decrypt(byte[] data) throws IOException {
 		try {
 			return decipher.doFinal(data);
 		} catch (Exception e) {
@@ -48,7 +47,7 @@ public class Aes {
 		}
 	}
 
-	public int decrypt(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset)
+	int decrypt(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset)
 			throws IOException {
 		try {
 			return decipher.doFinal(input, inputOffset, inputLen, output, outputOffset);
@@ -57,7 +56,7 @@ public class Aes {
 		}
 	}
 
-	public byte[] encrypt(byte[] data) throws IOException {
+	byte[] encrypt(byte[] data) throws IOException {
 		try {
 			return encipher.doFinal(data);
 		} catch (Exception e) {
